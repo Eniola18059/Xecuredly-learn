@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xecuredly Academy - Learning Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00ff88;
+            --primary-dark: #00cc6d;
+            --bg-dark: #0a0e14;
+            --bg-surface: #151a23;
+            --bg-elevated: #1e2531;
+            --text-primary: #e6e9ef;
+            --text-secondary: #9ca3af;
+            --border: #2a3140;
+            --error: #ff4444;
+            --success: #00ff88;
+            --accent-blue: #3b82f6;
+            --accent-purple: #a855f7;
+            --warning: #ffa500;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--bg-dark);
+        }
+
+        .logout-btn {
+            padding: 8px 16px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Main Layout */
+        .main-container {
+            display: flex;
+            height: calc(100vh - 73px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 350px;
+            background: var(--bg-surface);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .course-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .progress-section {
+            margin-top: 16px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .progress-bar-container {
+            height: 8px;
+            background: var(--bg-dark);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent-blue));
+            transition: width 0.5s ease;
+            border-radius: 4px;
+        }
+
+        .lessons-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .lesson-item {
+            padding: 16px;
+            margin-bottom: 8px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .lesson-item:hover {
+            border-color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        .lesson-item.active {
+            background: var(--bg-elevated);
+            border-color: var(--primary);
+        }
+
+        .lesson-item.completed {
+            border-color: var(--success);
+        }
+
+        .lesson-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .lesson-number {
+            width: 32px;
+            height: 32px;
+            background: var(--bg-elevated);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .lesson-item.completed .lesson-number {
+            background: var(--success);
+            color: var(--bg-dark);
+        }
+
+        .lesson-item.active .lesson-number {
+            background: var(--primary);
+            color: var(--bg-dark);
+        }
+
+        .lesson-title {
+            font-size: 15px;
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .lesson-duration {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .lesson-description {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .lesson-status {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 20px;
+            height: 20px;
+        }
+
+        .status-icon {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            background: #000;
+            aspect-ratio: 16/9;
+        }
+
+        .video-wrapper {
+            width: 100%;
+            height: 100%;
+        }
+
+        .video-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .video-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--bg-elevated), var(--bg-surface));
+        }
+
+        .video-placeholder svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .video-placeholder p {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        .lesson-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 32px;
+        }
+
+        .lesson-meta {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .meta-item svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .content-header {
+            margin-bottom: 24px;
+        }
+
+        .content-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .content-description {
+            font-size: 16px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .objectives-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .objectives-list li {
+            padding-left: 28px;
+            position: relative;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .objectives-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .resource-card {
+            padding: 16px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            transition: all 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .resource-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .resource-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-elevated);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+
+        .resource-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--primary);
+        }
+
+        .resource-title {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .resource-type {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Action Buttons */
+        .action-bar {
+            padding: 24px 32px;
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-secondary {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+        }
+
+        .btn-secondary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #00dd77);
+            color: var(--bg-dark);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(0, 255, 136, 0.3);
+        }
+
+        .complete-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .complete-checkbox input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        /* Welcome Screen */
+        .welcome-screen {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 32px;
+            text-align: center;
+        }
+
+        .welcome-icon {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--primary), var(--accent-blue));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .welcome-icon svg {
+            width: 60px;
+            height: 60px;
+            fill: var(--bg-dark);
+        }
+
+        .welcome-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .welcome-description {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            max-width: 600px;
+            width: 100%;
+            margin-top: 32px;
+        }
+
+        .stat-card {
+            padding: 24px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            background: linear-gradient(135deg, var(--primary), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 12px 16px;
+            }
+
+            .main-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                max-height: 40vh;
+            }
+
+            .lesson-content {
+                padding: 16px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-bar {
+                padding: 16px;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .nav-buttons {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">XECUREDLY</div>
+        <div class="user-menu">
+            <div class="user-info">
+                <div class="avatar" id="user-avatar">JD</div>
+                <span id="user-name">John Doe</span>
+            </div>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="course-title">SOC & Cybersecurity Fundamentals</div>
+                <div class="progress-section">
+                    <div class="progress-label">
+                        <span>YOUR PROGRESS</span>
+                        <span id="progress-percentage">0%</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="lessons-list" id="lessons-list">
+                <!-- Lessons will be dynamically loaded here -->
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <div id="welcome-screen" class="welcome-screen">
+                <div class="welcome-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+                    </svg>
+                </div>
+                <h1 class="welcome-title">Welcome to Xecuredly Academy</h1>
+                <p class="welcome-description">
+                    Master SOC operations and cybersecurity fundamentals through our comprehensive 12-lesson program. 
+                    Select a lesson from the sidebar to begin your journey.
+                </p>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Total Lessons</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="completed-count">0</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="remaining-count">12</div>
+                        <div class="stat-label">Remaining</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="lesson-view" class="hidden" style="display: none; flex-direction: column; height: 100%;">
+                <div class="video-container">
+                    <div class="video-wrapper" id="video-wrapper">
+                        <div class="video-placeholder">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            <p>Video will load here</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lesson-content" style="flex: 1; overflow-y: auto;">
+                    <div class="lesson-meta">
+                        <div class="meta-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            <span id="lesson-duration-display">15 min</span>
+                        </div>
+                        <div class="meta-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                            <span>Beginner Level</span>
+                        </div>
+                        <div class="meta-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                            </svg>
+                            <span id="lesson-number-display">Lesson 1</span>
+                        </div>
+                    </div>
+
+                    <div class="content-header">
+                        <h1 class="content-title" id="lesson-title-display">Lesson Title</h1>
+                        <p class="content-description" id="lesson-description-display">Lesson description</p>
+                    </div>
+
+                    <div class="section">
+                        <h2 class="section-title">Learning Objectives</h2>
+                        <ul class="objectives-list" id="objectives-list">
+                            <li>Understand core cybersecurity principles</li>
+                            <li>Learn threat detection techniques</li>
+                            <li>Master security monitoring tools</li>
+                        </ul>
+                    </div>
+
+                    <div class="section">
+                        <h2 class="section-title">Additional Resources</h2>
+                        <div class="resources-grid">
+                            <a href="#" class="resource-card" onclick="return false;">
+                                <div class="resource-icon">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                                        <polyline points="10 9 9 9 8 9"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="resource-title">Lesson Notes</div>
+                                <div class="resource-type">PDF</div>
+                            </a>
+                            <a href="#" class="resource-card" onclick="return false;">
+                                <div class="resource-icon">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="7 10 12 15 17 10"></polyline>
+                                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                                    </svg>
+                                </div>
+                                <div class="resource-title">Lab Files</div>
+                                <div class="resource-type">ZIP</div>
+                            </a>
+                            <a href="#" class="resource-card" onclick="return false;">
+                                <div class="resource-icon">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                    </svg>
+                                </div>
+                                <div class="resource-title">Reference Links</div>
+                                <div class="resource-type">WEB</div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <div class="nav-buttons">
+                        <button class="btn btn-secondary" id="prev-btn" onclick="previousLesson()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="15 18 9 12 15 6"></polyline>
+                            </svg>
+                            Previous
+                        </button>
+                        <button class="btn btn-secondary" id="next-btn" onclick="nextLesson()">
+                            Next
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                    <label class="complete-checkbox">
+                        <input type="checkbox" id="complete-checkbox" onchange="toggleComplete()">
+                        <span>Mark as completed</span>
+                    </label>
+                    <button class="btn btn-primary" onclick="nextLesson()">
+                        Continue Learning
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Lesson Data Structure
+        const lessons = [
+            {
+                id: 1,
+                title: "Introduction to SOC Operations",
+                description: "Learn the fundamentals of Security Operations Center, its role, and key responsibilities in cybersecurity.",
+                duration: "15 min",
+                videoUrl: "https://drive.google.com/file/d/1d6jHrlrmiTrXepO-T9XrCDHY64zjAT_D/preview", // Add Google Drive embed URL here
+                objectives: [
+                    "Understand what a SOC is and its importance",
+                    "Learn about SOC roles and responsibilities",
+                    "Explore the SOC workflow and processes"
+                ],
+                completed: false
+            },
+            {
+                id: 2,
+                title: "Threat Landscape Overview",
+                description: "Explore common cyber threats, attack vectors, and the current threat landscape facing organizations.",
+                duration: "18 min",
+                videoUrl: "",
+                objectives: [
+                    "Identify common cyber threats and attack types",
+                    "Understand threat actors and their motivations",
+                    "Learn about emerging threats in cybersecurity"
+                ],
+                completed: false
+            },
+            {
+                id: 3,
+                title: "Security Monitoring Fundamentals",
+                description: "Master the basics of security monitoring, including tools, techniques, and best practices.",
+                duration: "20 min",
+                videoUrl: "",
+                objectives: [
+                    "Learn security monitoring principles",
+                    "Understand log management and analysis",
+                    "Explore monitoring tools and technologies"
+                ],
+                completed: false
+            },
+            {
+                id: 4,
+                title: "SIEM Systems and Log Analysis",
+                description: "Deep dive into Security Information and Event Management systems and effective log analysis techniques.",
+                duration: "22 min",
+                videoUrl: "",
+                objectives: [
+                    "Understand SIEM architecture and capabilities",
+                    "Learn log correlation and analysis",
+                    "Practice with real-world SIEM scenarios"
+                ],
+                completed: false
+            },
+            {
+                id: 5,
+                title: "Incident Detection and Triage",
+                description: "Learn how to detect security incidents and perform effective triage for rapid response.",
+                duration: "25 min",
+                videoUrl: "",
+                objectives: [
+                    "Master incident detection techniques",
+                    "Learn triage methodologies",
+                    "Understand alert prioritization"
+                ],
+                completed: false
+            },
+            {
+                id: 6,
+                title: "Incident Response Process",
+                description: "Understand the complete incident response lifecycle from detection to recovery.",
+                duration: "20 min",
+                videoUrl: "",
+                objectives: [
+                    "Learn the IR lifecycle phases",
+                    "Understand containment strategies",
+                    "Explore eradication and recovery procedures"
+                ],
+                completed: false
+            },
+            {
+                id: 7,
+                title: "Threat Intelligence",
+                description: "Explore threat intelligence gathering, analysis, and application in SOC operations.",
+                duration: "18 min",
+                videoUrl: "",
+                objectives: [
+                    "Understand threat intelligence types",
+                    "Learn intelligence gathering techniques",
+                    "Apply threat intelligence to SOC operations"
+                ],
+                completed: false
+            },
+            {
+                id: 8,
+                title: "Network Security Monitoring",
+                description: "Master network-based security monitoring and traffic analysis techniques.",
+                duration: "23 min",
+                videoUrl: "",
+                objectives: [
+                    "Learn network monitoring fundamentals",
+                    "Understand packet analysis",
+                    "Detect network-based attacks"
+                ],
+                completed: false
+            },
+            {
+                id: 9,
+                title: "Endpoint Detection and Response",
+                description: "Learn endpoint security monitoring and EDR tools for comprehensive threat detection.",
+                duration: "21 min",
+                videoUrl: "",
+                objectives: [
+                    "Understand EDR capabilities",
+                    "Learn endpoint threat detection",
+                    "Master endpoint forensics basics"
+                ],
+                completed: false
+            },
+            {
+                id: 10,
+                title: "Security Automation and Orchestration",
+                description: "Discover how to automate SOC tasks and orchestrate security workflows using SOAR platforms.",
+                duration: "19 min",
+                videoUrl: "",
+                objectives: [
+                    "Learn SOAR concepts and benefits",
+                    "Understand automation use cases",
+                    "Explore playbook development"
+                ],
+                completed: false
+            },
+            {
+                id: 11,
+                title: "Compliance and Reporting",
+                description: "Understand compliance requirements and effective security reporting for stakeholders.",
+                duration: "17 min",
+                videoUrl: "",
+                objectives: [
+                    "Learn key compliance frameworks",
+                    "Understand reporting requirements",
+                    "Create effective security metrics"
+                ],
+                completed: false
+            },
+            {
+                id: 12,
+                title: "SOC Career Development",
+                description: "Explore career paths in SOC, required skills, and strategies for professional growth.",
+                duration: "16 min",
+                videoUrl: "",
+                objectives: [
+                    "Understand SOC career paths",
+                    "Learn required skills and certifications",
+                    "Develop your career roadmap"
+                ],
+                completed: false
+            }
+        ];
+
+        let currentLessonIndex = null;
+
+        // Load user data
+        function loadUserData() {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            if (!user.loggedIn) {
+                alert('Please login first!');
+                // Redirect to login page - update this path as needed
+                // window.location.href = 'xecuredly-auth.html';
+                return;
+            }
+
+            document.getElementById('user-name').textContent = user.name || user.email || 'User';
+            const initials = (user.name || user.email || 'U').substring(0, 2).toUpperCase();
+            document.getElementById('user-avatar').textContent = initials;
+
+            // Load progress
+            const savedProgress = JSON.parse(localStorage.getItem('lessonProgress') || '[]');
+            savedProgress.forEach(id => {
+                const lesson = lessons.find(l => l.id === id);
+                if (lesson) lesson.completed = true;
+            });
+        }
+
+        // Render lessons list
+        function renderLessons() {
+            const container = document.getElementById('lessons-list');
+            container.innerHTML = '';
+
+            lessons.forEach((lesson, index) => {
+                const lessonEl = document.createElement('div');
+                lessonEl.className = 'lesson-item';
+                if (lesson.completed) lessonEl.classList.add('completed');
+                if (currentLessonIndex === index) lessonEl.classList.add('active');
+
+                lessonEl.innerHTML = `
+                    <div class="lesson-header">
+                        <div class="lesson-number">${String(lesson.id).padStart(2, '0')}</div>
+                        <div class="lesson-title">${lesson.title}</div>
+                        ${lesson.completed ? `
+                            <div class="lesson-status">
+                                <svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="lesson-duration">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        ${lesson.duration}
+                    </div>
+                    <div class="lesson-description">${lesson.description}</div>
+                `;
+
+                lessonEl.addEventListener('click', () => loadLesson(index));
+                container.appendChild(lessonEl);
+            });
+
+            updateProgress();
+        }
+
+        // Load specific lesson
+        function loadLesson(index) {
+            currentLessonIndex = index;
+            const lesson = lessons[index];
+
+            // Hide welcome, show lesson
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('lesson-view').style.display = 'flex';
+
+            // Update video
+            const videoWrapper = document.getElementById('video-wrapper');
+            if (lesson.videoUrl) {
+                videoWrapper.innerHTML = `<iframe src="${lesson.videoUrl}" allow="autoplay"></iframe>`;
+            } else {
+                videoWrapper.innerHTML = `
+                    <div class="video-placeholder">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                        <p>Add your Google Drive video URL in the lesson data</p>
+                    </div>
+                `;
+            }
+
+            // Update content
+            document.getElementById('lesson-title-display').textContent = lesson.title;
+            document.getElementById('lesson-description-display').textContent = lesson.description;
+            document.getElementById('lesson-duration-display').textContent = lesson.duration;
+            document.getElementById('lesson-number-display').textContent = `Lesson ${lesson.id}`;
+
+            // Update objectives
+            const objectivesList = document.getElementById('objectives-list');
+            objectivesList.innerHTML = lesson.objectives.map(obj => `<li>${obj}</li>`).join('');
+
+            // Update completion checkbox
+            document.getElementById('complete-checkbox').checked = lesson.completed;
+
+            // Update navigation buttons
+            document.getElementById('prev-btn').disabled = index === 0;
+            document.getElementById('next-btn').disabled = index === lessons.length - 1;
+
+            // Update UI
+            renderLessons();
+        }
+
+        // Toggle lesson completion
+        function toggleComplete() {
+            if (currentLessonIndex === null) return;
+
+            const lesson = lessons[currentLessonIndex];
+            lesson.completed = document.getElementById('complete-checkbox').checked;
+
+            // Save progress
+            const completedIds = lessons.filter(l => l.completed).map(l => l.id);
+            localStorage.setItem('lessonProgress', JSON.stringify(completedIds));
+
+            renderLessons();
+        }
+
+        // Navigation
+        function previousLesson() {
+            if (currentLessonIndex > 0) {
+                loadLesson(currentLessonIndex - 1);
+            }
+        }
+
+        function nextLesson() {
+            if (currentLessonIndex < lessons.length - 1) {
+                loadLesson(currentLessonIndex + 1);
+            }
+        }
+
+        // Update progress
+        function updateProgress() {
+            const completed = lessons.filter(l => l.completed).length;
+            const percentage = Math.round((completed / lessons.length) * 100);
+
+            document.getElementById('progress-percentage').textContent = `${percentage}%`;
+            document.getElementById('progress-bar').style.width = `${percentage}%`;
+            document.getElementById('completed-count').textContent = completed;
+            document.getElementById('remaining-count').textContent = lessons.length - completed;
+        }
+
+        // Logout
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('user');
+                alert('You have been logged out. Please close this tab and open the login page again.');
+                // window.location.href = 'xecuredly-auth.html';
+            }
+        }
+
+        // Initialize
+        loadUserData();
+        renderLessons();
+    </script>
+</body>
+</html>
